@@ -3,7 +3,11 @@ defmodule InverseCaptcha do
     with {:ok, mode, path} <- parse_args(args),
          {:ok, digits}     <- to_digits(path),
          offset            <- to_offset(mode, digits) do
-      sum_duplicates(digits, offset)
+      comparisons =
+        digits
+        |> Enum.drop(offset)
+        |> Kernel.++(digits)
+      sum_duplicates(digits, comparisons)
       |> IO.puts
     else
       _error ->
@@ -33,26 +37,17 @@ defmodule InverseCaptcha do
     end
   end
 
-  defp to_offset(true, digits),  do: div(length(digits), 2) - 1
-  defp to_offset(nil,  _digits), do: 0
+  defp to_offset(true, digits),  do: div(length(digits), 2)
+  defp to_offset(nil,  _digits), do: 1
 
-  defp sum_duplicates(digits, offset, i \\ 0, sum \\ 0)
-  defp sum_duplicates(digits, offset, i, sum) when i < length(digits) do
-    first    = Enum.at(digits, i)
-    other    =
-      digits
-      |> Enum.drop(i + 1)
-      |> Kernel.++(digits)
-      |> Enum.at(offset)
-    addition =
-      if first == other do
-        String.to_integer(first)
-      else
-        0
-      end
-    sum_duplicates(digits, offset, i + 1, sum + addition)
+  defp sum_duplicates(digits, comparisons, sum \\ 0)
+  defp sum_duplicates([match | digits], [match | comparisons], sum) do
+    sum_duplicates(digits, comparisons, sum + String.to_integer(match))
   end
-  defp sum_duplicates(_digits, _offset, _i, sum), do: sum
+  defp sum_duplicates([_digit | digits], [_comparison | comparisons], sum) do
+    sum_duplicates(digits, comparisons, sum)
+  end
+  defp sum_duplicates([ ], _comparison, sum), do: sum
 end
 
 System.argv
