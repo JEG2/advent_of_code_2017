@@ -39,7 +39,7 @@ defmodule MemoryReallocation do
       |> Enum.with_index
       |> Enum.map(fn
         {_blocks, i} when i == replacement ->
-        split + extra_portion(replacement, divisions, extra, i)
+          split + extra_portion(replacement, divisions, extra, i)
         {blocks, i} ->
           blocks + split + extra_portion(replacement, divisions, extra, i)
       end)
