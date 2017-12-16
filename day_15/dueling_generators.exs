@@ -20,14 +20,7 @@ defmodule DuelingGenerators do
     |> Enum.map(fn {{[start], factor}, i} -> builder.(start, factor, i) end)
     |> Stream.zip
     |> Stream.transform(0, fn {a, b}, sum ->
-      # IO.inspect({a, b})
-      new_sum =
-        sum +
-      if compare(a) == compare(b) do
-        1
-      else
-        0
-      end
+      new_sum = sum + if compare(a) == compare(b) do 1 else 0 end
       {[new_sum], new_sum}
     end)
     |> Stream.drop(String.to_integer(pairs) - 1)
