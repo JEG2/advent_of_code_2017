@@ -9,7 +9,7 @@ defmodule DuelingGenerators do
   end
   def run(_args) do
     IO.puts "USAGE:  elixir #{Path.basename(__ENV__.file)} " <>
-            "[-r] INPUT_FILE_PATH"
+            "[-p] INPUT_FILE_PATH"
   end
 
   defp solve(pairs, path, builder) do
